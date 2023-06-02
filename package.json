@@ -9,6 +9,6 @@
   "author": "Joseph",
   "license": "ISC",
   "dependencies": {
-    "web3": "^0.20.1",
+    "web3": "^0.20.1"
   }
 }
