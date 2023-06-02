@@ -1,0 +1,17 @@
+{
+  "name": "web3_demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Joseph",
+  "license": "ISC",
+  "dependencies": {
+    "alchemy-sdk": "^2.8.3",
+    "ethereumjs-tx": "^1.3.3",
+    "web3": "^0.20.1",
+    "web3admin": "^0.4.4"
+  }
+}

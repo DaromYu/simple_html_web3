@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset = "utf-8">
+        <title>Just a DApp</title>
+        <script type="text/javascript" src="node_modules/web3/dist/web3.min.js"></script>
+        <script type="text/javascript">
+          var web3 = new Web3();
+          //This is often a node activated by ganache.
+          web3.setProvider(new Web3.providers.HttpProvider("http://localhost:7545"));
+          
+          
+          let coinbaseAccount;
+          let balance;
+          let newestBlock;
+          
+          let storContract = {
+            abiString: "",
+            abiInstance: {},
+            contractAddress: "",
+            contractExec: {}
+          }
+          
+          async function start() {
+            try {
+
+              // Show basic node information.
+              //coinbaseAccount = web3.eth.coinbase;
+              coinbaseAccount = web3.eth.accounts[0];
+              balance = await web3.eth.getBalance(coinbaseAccount);
+              newestBlock = await web3.eth.getBlock('latest');
+              
+              var html_account = document.getElementById("account");
+              var html_balance = document.getElementById("balance");
+              var html_block_latest = document.getElementById("block_latest");
+              
+              html_account.textContent = coinbaseAccount;
+              html_balance.textContent = web3.fromWei(balance, "ether");
+              html_block_latest.textContent = newestBlock.hash;
+              
+              
+              // ===========================================================================================
+              // Initialize our contract
+              storContract.abiString       = "[{\"inputs\":[],\"name\":\"getInt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getString\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"x\",\"type\":\"uint256\"}],\"name\":\"setInt\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"x\",\"type\":\"string\"}],\"name\":\"setString\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]";
+              storContract.abiInstance     = await web3.eth.contract(JSON.parse(storContract.abiString));
+              storContract.contractAddress = "0x9f41F21889A9a16C893eAF6F4BF03bD7958aCF0f";
+              storContract.contractExec    = await storContract.abiInstance.at(storContract.contractAddress);
+            
+            }catch(err) {
+              console.error("Error:", err);
+            }
+          }
+          
+          window.addEventListener("load", start);
+
+          function showFunction() {
+            document.getElementById("contract_int_value").textContent = storContract.contractExec.getInt.call();
+          }
+
+          function sendFunction() {
+            var amount = document.getElementById("amount").value;
+            console.log(amount);
+
+                try {
+                  storContract.contractExec.setInt.sendTransaction(amount, {from: web3.eth.accounts[0]});
+                  alert("Send transaction success");
+                }catch(errors) {
+                  console.error("Error:", errors);
+                  alert(errors);
+                }
+
+          }
+          
+          
+        </script>
+      </head>
+    <body>
+        <h2>Account: <font color="green"><span id="account"></span></font></h2>
+        <h2>Balance: <font color="blue"><span id="balance"></span></font> Ether</h2>
+        <h2>Latest Block Hash: <font color="green"><span id="block_latest"></span></font></h2>
+        <h2>The contract int value (0x9f41....CF0f): <font color="blue"><span id="contract_int_value"></span></font></h2>
+        
+        <button onclick="showFunction()">Show me stored int</button>
+        <br>
+        <br>
+        <button onclick="sendFunction()">Edit stored int</button>
+        <input type="number" id="amount">
+        
+    </body>
+</html>
