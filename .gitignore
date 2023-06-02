@@ -1,0 +1,9 @@
+# Ignore everything in this directory
+Thumbs.db
+.DS_Store
+node_modules/
+package-lock.json
+document.txt
+
+# Except this file
+!.gitignore

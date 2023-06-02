@@ -9,7 +9,6 @@
           //This is a node often activated by ganache.
           web3.setProvider(new Web3.providers.HttpProvider("http://localhost:7545"));
           
-          
           let coinbaseAccount;
           let balance;
           let newestBlock;
@@ -23,9 +22,7 @@
           
           async function start() {
             try {
-
               // Show basic node information.
-              //coinbaseAccount = web3.eth.coinbase;
               coinbaseAccount = web3.eth.accounts[0];
               balance = await web3.eth.getBalance(coinbaseAccount);
               newestBlock = await web3.eth.getBlock('latest');
@@ -38,9 +35,7 @@
               html_balance.textContent = web3.fromWei(balance, "ether");
               html_block_latest.textContent = newestBlock.hash;
               
-              
-              // ===========================================================================================
-              // Initialize our contract
+              //Initialize our contract
               storContract.abiString       = '[{"inputs": [],"name": "getStoredInt","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "_x","type": "uint256"}],"name": "setStoredInt","outputs": [],"stateMutability": "nonpayable","type": "function"}]';
               storContract.abiInstance     = await web3.eth.contract(JSON.parse(storContract.abiString));
               storContract.contractAddress = "0x63f07baA3E3085f4fd4Edde2b24d8229FfFa8a00"; //Just for sample, contract address determined by your environment.
@@ -52,26 +47,22 @@
           }
           
           window.addEventListener("load", start);
-
+          
           function showFunction() {
             document.getElementById("contract_int_value").textContent = storContract.contractExec.getStoredInt.call();
           }
-
+          
           function sendFunction() {
             var amount = document.getElementById("amount").value;
             console.log(amount);
-
-                try {
-                  storContract.contractExec.setStoredInt.sendTransaction(amount, {from: web3.eth.accounts[0]});
-                  alert("Send transaction success");
-                }catch(errors) {
-                  console.error("Error:", errors);
-                  alert(errors);
-                }
-
+            try {
+              storContract.contractExec.setStoredInt.sendTransaction(amount, {from: web3.eth.accounts[0]});
+              alert("Send transaction success");
+            }catch(errors) {
+              console.error("Error:", errors);
+              alert(errors);
+            }
           }
-          
-          
         </script>
       </head>
     <body>
